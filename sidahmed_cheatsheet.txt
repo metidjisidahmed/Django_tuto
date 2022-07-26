@@ -1,0 +1,13 @@
+SHELL COMMANDS
+.\venv\Scripts\activate :
+    to activate my virtual environment so every command i run is related only to my venv
+python manage.py runserver 8000 :
+    Start my server on the port 8000
+python manage.py startapp api .
+    the command I used to create my api folder ( app )
+python manage.py shell :
+    To activate the Python shell
+python manage.py makemigrations :
+    Like Kotlin RoomDatabase : whenever I add or changed a database models n i have to run this command
+python manage.py migrate :
+    to apply the migrations in the staging area put by makemigrations command
