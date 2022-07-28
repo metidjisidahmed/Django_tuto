@@ -31,14 +31,35 @@ def get_product_route(request, *args, **kwargs):
     print("REQUEST BODY =", request.body)
     # get random product
     product_instance = Products.objects.all().order_by("?").first()
+    product_serializable = ProductsSerializer(product_instance)
     response = dict()
-    response['product'] = ProductsSerializer(product_instance).data
+    response['product'] = product_serializable.data
     return Response({"success": True, "data": response, "error": None})
 
 @api_view(["POST"])
 def create_product_route(request, *args, **kwargs):
     print("REQUEST BODY =", request.body)
     product_params = json.loads(request.body)
+    product_instance = Products.objects.all().order_by("?").first()
     created_product = Products.objects.create(name=product_params['name'], content=product_params['content'],
                                               price=product_params['price'])
-    return Response({"success": True, "data": model_to_dict(created_product, fields=["id", "name"]), "error": None})
+    product_serializable = ProductsSerializer(created_product)
+
+    return Response({"success": True, "data": model_to_dict(product_serializable.data, fields=["id", "name"]), "error": None})
+
+# In this endpoint im gonna apply a validator like JOI where it will verify if my body params matches my Models
+# my model has only 'name' field as a required field
+# get discount price has to do the calculation only if our body has discount attribute
+@api_view(["POST"])
+def create_product_by_name_route(request, *args, **kwargs):
+    print("REQUEST BODY =", request.body)
+    product_params=dict()
+    if request.body:
+        product_params = json.loads(request.body)
+
+    productSerializable= ProductsSerializer(data=product_params)
+    if productSerializable.is_valid(raise_exception=True):
+        result_product = productSerializable.data
+        # created_product = Products.objects.create(name=product_params['name'], content=product_params['content'],
+        #                                           price=product_params['price'])
+        return Response({"success": True, "data": result_product, "error": None})
